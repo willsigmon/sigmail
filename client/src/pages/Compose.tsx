@@ -98,7 +98,7 @@ export default function Compose() {
                 <SelectValue placeholder="Select a persona" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Default</SelectItem>
+                <SelectItem value="default">Default</SelectItem>
                 {personas?.map((persona) => (
                   <SelectItem key={persona.id} value={persona.id}>
                     <div className="flex items-center gap-2">

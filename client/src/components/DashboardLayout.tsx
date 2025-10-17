@@ -27,9 +27,17 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
+import { Mail, FileText, Bell, Repeat, BarChart3, Settings as SettingsIcon } from "lucide-react";
+
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: Mail, label: "Inbox", path: "/" },
+  { icon: FileText, label: "Compose", path: "/compose" },
+  { icon: Users, label: "Contacts", path: "/contacts" },
+  { icon: FileText, label: "Templates", path: "/templates" },
+  { icon: Bell, label: "Follow-ups", path: "/follow-ups" },
+  { icon: Repeat, label: "Sequences", path: "/sequences" },
+  { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: SettingsIcon, label: "Settings", path: "/settings" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

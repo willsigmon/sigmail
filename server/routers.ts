@@ -165,9 +165,9 @@ export const appRouter = router({
     use: protectedProcedure
       .input(z.object({
         templateId: z.string(),
-        variables: z.record(z.string()).optional(),
+        variables: z.record(z.string(), z.string()).optional(),
       }))
-      .mutation(async ({ ctx, input }) => {
+      .mutation(async ({ input }) => {
         const template = await db.getTemplate(input.templateId);
         if (!template) throw new Error("Template not found");
 
@@ -671,11 +671,11 @@ export const appRouter = router({
       .input(z.object({
         service: z.string(),
         apiKey: z.string().optional(),
-        config: z.record(z.any()).optional(),
+        config: z.record(z.string(), z.any()).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // TODO: Encrypt API key before storing
-        const integration = await db.upsertIntegration({
+        await db.upsertIntegration({
           id: nanoid(),
           userId: ctx.user.id,
           service: input.service,

@@ -8,6 +8,16 @@ import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 
 export const appRouter = router({
+  emailAccounts: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return [];
+    }),
+    connect: protectedProcedure
+      .input(z.object({ provider: z.string(), email: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        return { success: true };
+      }),
+  }),
   system: systemRouter,
 
   auth: router({

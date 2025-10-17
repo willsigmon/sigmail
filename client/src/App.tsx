@@ -13,6 +13,7 @@ import FollowUps from "./pages/FollowUps";
 import Sequences from "./pages/Sequences";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Personas from "./pages/Personas";
 import { useAuth } from "./_core/hooks/useAuth";
 
 function Router() {
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/sequences" component={Sequences} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/settings" component={Settings} />
+      <Route path="/personas" component={Personas} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

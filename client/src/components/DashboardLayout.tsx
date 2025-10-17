@@ -27,7 +27,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
-import { Mail, FileText, Bell, Repeat, BarChart3, Settings as SettingsIcon } from "lucide-react";
+import { Mail, FileText, Bell, Repeat, BarChart3, Settings as SettingsIcon, User } from "lucide-react";
 
 const menuItems = [
   { icon: Mail, label: "Inbox", path: "/" },
@@ -37,6 +37,7 @@ const menuItems = [
   { icon: Bell, label: "Follow-ups", path: "/follow-ups" },
   { icon: Repeat, label: "Sequences", path: "/sequences" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: User, label: "Personas", path: "/personas" },
   { icon: SettingsIcon, label: "Settings", path: "/settings" },
 ];
 

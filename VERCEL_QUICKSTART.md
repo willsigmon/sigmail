@@ -86,7 +86,7 @@ After adding env vars:
 2. **Create database**: `sigmail`
 3. **Get connection string**:
    - Go to database → Connect
-   - Select "Node.js" 
+   - Select "Node.js"
    - Copy the connection string
 4. **Add to Vercel**:
    ```
@@ -349,4 +349,3 @@ https://your-app.vercel.app
 ---
 
 **Ready to deploy? Go to: https://vercel.com/new** 🎯
-

@@ -1,17 +1,26 @@
-import type { CookieOptions, Request } from "express";
+import type { IncomingMessage, ServerResponse } from "http";
+// @ts-ignore - cookie package has type export issues with some TS configurations
+import { serialize as serializeCookie } from "cookie";
 
-const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+type SameSite = "strict" | "lax" | "none";
 
-function isIpAddress(host: string) {
-  // Basic IPv4 check and IPv6 presence detection.
-  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return true;
-  return host.includes(":");
-}
+export type CookieOptions = {
+  domain?: string;
+  httpOnly?: boolean;
+  path?: string;
+  sameSite?: SameSite;
+  secure?: boolean;
+  maxAge?: number;
+  expires?: Date;
+};
 
-function isSecureRequest(req: Request) {
+type RequestLike = IncomingMessage & { protocol?: string };
+type ResponseLike = Pick<ServerResponse, "getHeader" | "setHeader">;
+
+function isSecureRequest(req: RequestLike) {
   if (req.protocol === "https") return true;
 
-  const forwardedProto = req.headers["x-forwarded-proto"];
+  const forwardedProto = req.headers?.["x-forwarded-proto"];
   if (!forwardedProto) return false;
 
   const protoList = Array.isArray(forwardedProto)
@@ -21,28 +30,59 @@ function isSecureRequest(req: Request) {
   return protoList.some(proto => proto.trim().toLowerCase() === "https");
 }
 
-export function getSessionCookieOptions(
-  req: Request
-): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
-  // const hostname = req.hostname;
-  // const shouldSetDomain =
-  //   hostname &&
-  //   !LOCAL_HOSTS.has(hostname) &&
-  //   !isIpAddress(hostname) &&
-  //   hostname !== "127.0.0.1" &&
-  //   hostname !== "::1";
+function appendSetCookieHeader(res: ResponseLike, value: string) {
+  const existing = res.getHeader("Set-Cookie");
 
-  // const domain =
-  //   shouldSetDomain && !hostname.startsWith(".")
-  //     ? `.${hostname}`
-  //     : shouldSetDomain
-  //       ? hostname
-  //       : undefined;
+  if (!existing) {
+    res.setHeader("Set-Cookie", value);
+    return;
+  }
 
+  if (Array.isArray(existing)) {
+    res.setHeader("Set-Cookie", [...existing, value]);
+    return;
+  }
+
+  res.setHeader("Set-Cookie", [String(existing), value]);
+}
+
+export function setCookie(
+  res: ResponseLike,
+  name: string,
+  value: string,
+  options: CookieOptions = {}
+) {
+  const serialized = serializeCookie(name, value, {
+    httpOnly: options.httpOnly,
+    domain: options.domain,
+    path: options.path ?? "/",
+    sameSite: options.sameSite,
+    secure: options.secure,
+    maxAge: options.maxAge,
+    expires: options.expires,
+  });
+
+  appendSetCookieHeader(res, serialized);
+}
+
+export function clearCookie(
+  res: ResponseLike,
+  name: string,
+  options: CookieOptions = {}
+) {
+  setCookie(res, name, "", {
+    ...options,
+    maxAge: 0,
+    expires: new Date(0),
+  });
+}
+
+export function getSessionCookieOptions(req: RequestLike): CookieOptions {
+  const secure = isSecureRequest(req);
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    sameSite: secure ? "none" : "lax",
+    secure,
   };
 }

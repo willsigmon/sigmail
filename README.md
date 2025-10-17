@@ -47,9 +47,8 @@ A powerful, AI-driven email management platform that helps you write, manage, an
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/willsigmon/newdash.git
-cd newdash
-git checkout email-assistant
+git clone https://github.com/willsigmon/sigmail.git
+cd sigmail
 ```
 
 ### 2. Install dependencies
@@ -60,7 +59,7 @@ pnpm install
 
 ### 3. Set up environment variables
 
-The following environment variables are automatically injected by the Manus platform:
+Create a copy of `.env.example` (or set variables directly in your hosting provider) with the following keys. When deploying to Manus, they are injected automatically; for Vercel you will need to configure them manually.
 
 - `DATABASE_URL` - MySQL/TiDB connection string
 - `JWT_SECRET` - Session cookie signing secret
@@ -84,7 +83,17 @@ This will create all necessary tables in your database.
 pnpm dev
 ```
 
-The application will be available at `http://localhost:3000`
+The application will be available at `http://localhost:3000` and proxies the Vite client + Express server from a single process.
+
+### 6. Deploying to Vercel
+
+1. Run `pnpm build` locally to confirm the production bundle succeeds.
+2. Create a new Vercel project and link it to this repository.
+3. Set the environment variables listed above in the **Production** environment. Make sure `JWT_SECRET`, `VITE_APP_ID`, `OAUTH_SERVER_URL`, and `DATABASE_URL` are present.
+4. Trigger a deploy. Vercel will build the client and bundle the Express entry point. API routes are served through:
+   - `/api/trpc` → tRPC serverless function
+   - `/api/oauth/callback` → Manus OAuth callback handler
+5. After deploy completes, visit the Vercel URL. OAuth cookies are issued with `SameSite=None` on HTTPS and `SameSite=Lax` locally, so cross-origin requests remain functional.
 
 ## 📱 Usage
 
@@ -281,4 +290,3 @@ For questions or issues, please contact the project owner.
 ---
 
 **Built with ❤️ by Will Sigmon**
-
